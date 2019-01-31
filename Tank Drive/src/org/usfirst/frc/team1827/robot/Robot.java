@@ -22,42 +22,119 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
  * it contains the code necessary to operate a robot with tank drive.
  */
 public class Robot extends IterativeRobot {
-	private static final int kFrontLeftChannel = 2;
-	private static final int kRearLeftChannel = 3;
-	private static final int kFrontRightChannel = 1;
+	private static final int kFrontLeftChannel = 1;
+	private static final int kRearLeftChannel = 2;
+	private static final int kFrontRightChannel = 6;
 	private static final int kRearRightChannel = 4;
+	
+	
 	
 	SpeedController frontLeft = new VictorSP(kFrontLeftChannel);
 	SpeedController rearLeft = new VictorSP(kRearLeftChannel);
 	SpeedController frontRight = new VictorSP(kFrontRightChannel);
 	SpeedController rearRight = new VictorSP(kRearRightChannel);
 	XboxController joystick = new XboxController(0);
-
+	SpeedController arm = new VictorSP(3);
 	@Override
 	public void robotInit() {
-		frontLeft.setInverted(true);
-		rearLeft.setInverted(true);
+		
+		
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		double speed = 1;
-		//System.out.println(joystick.getY(Hand.kLeft));
+		System.out.println(joystick.getY(Hand.kRight));
 
-		if(joystick.getY(Hand.kLeft)>0) {
+		if(joystick.getY(Hand.kLeft)*-1>.3) {
+			frontLeft.set(speed);
+			//frontRight.set(speed);
+			rearLeft.set(speed);
+			//rearRight.set(speed);
+		}
+		else if(joystick.getY(Hand.kLeft)*-1<-.3) {
+			frontLeft.set(-1*speed);
+			//frontRight.set(-1*speed);
+			rearLeft.set(-1*speed);
+			//rearRight.set(-1*speed);
+			
+		}
+		else {
+			frontLeft.set(0);
+			//frontRight.set(0);
+			rearLeft.set(0);
+			//rearRight.set(0);
+		}
+		
+		
+		if(joystick.getY(Hand.kRight)*-1>.3) {
+			//frontLeft.set(speed);
+			frontRight.set(speed);
+			//rearLeft.set(speed);
+			rearRight.set(speed);
+		}
+		else if(joystick.getY(Hand.kRight)*-1<-.3) {
+			//frontLeft.set(-1*speed);
+			frontRight.set(-1*speed);
+			//rearLeft.set(-1*speed);
+			rearRight.set(-1*speed);
+			
+		}
+		else {
+			//frontLeft.set(0);
+			frontRight.set(0);
+			//rearLeft.set(0);
+			rearRight.set(0);
+		}
+		if (joystick.getTriggerAxis(Hand.kRight)==1) {
+			arm.set(speed);
+			
+		}
+		else if (joystick.getTriggerAxis(Hand.kLeft)==1) {
+			arm.set(-1*speed);
+		}
+		else {
+			arm.set(0);
+		}
+		
+		/*if(joystick.getY(Hand.kLeft)*-1>.3) {
 			frontLeft.set(speed);
 			frontRight.set(speed);
 			rearLeft.set(speed);
 			rearRight.set(speed);
 		}
-		
-		
+		else if(joystick.getY(Hand.kLeft)*-1<-.3) {
+			frontLeft.set(-1*speed);
+			frontRight.set(-1*speed);
+			rearLeft.set(-1*speed);
+			rearRight.set(-1*speed);
+			
+		}
+		else if(joystick.getX(Hand.kRight)*-1>.3) {
+			frontLeft.set(speed);
+			frontRight.set(-1*speed);
+			rearLeft.set(speed);
+			rearRight.set(-1*speed);
+		}
+		else if(joystick.getX(Hand.kRight)*-1>.3) {
+			frontLeft.set(-1*speed);
+			frontRight.set(speed);
+			rearLeft.set(-1*speed);
+			rearRight.set(speed);
+		}
+		else {
+			frontLeft.set(0);
+			frontRight.set(0);
+			rearLeft.set(0);
+			rearRight.set(0);
+		}*/
 	}
 	
 	@Override
 	public void autonomousPeriodic() {
+		
 		System.out.println("Test");
-		double speed = .1;
+		double speed = 1;
 		Timer time = new Timer();
 		while(time.get()<3) {
 			frontLeft.set(speed);
