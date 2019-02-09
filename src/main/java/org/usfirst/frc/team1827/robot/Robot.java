@@ -8,14 +8,15 @@
 package org.usfirst.frc.team1827.robot;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.TimedRobot;
+//import edu.wpi.first.wpilibj.Joystick;
+//import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+//import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.cameraserver.CameraServer;
 
 // import edu.wpi.first.networktables;
 // missing, not sure why. Don't think we need it anyway. -Jackson
@@ -24,7 +25,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
  * This is a demo program showing the use of the RobotDrive class, specifically
  * it contains the code necessary to operate a robot with tank drive.
  */
-public class Robot extends IterativeRobot {
+public class Robot extends TimedRobot {
 	private static final int kFrontLeftChannel = 1;
 	private static final int kRearLeftChannel = 2;
 	private static final int kFrontRightChannel = 6;
@@ -40,8 +41,14 @@ public class Robot extends IterativeRobot {
 	SpeedController arm = new VictorSP(3);
 	@Override
 	public void robotInit() {
-		
-		
+		// From example project "Simple Vision":
+		/**
+		 * Uses the CameraServer class to automatically capture video from a USB webcam
+		 * and send it to the FRC dashboard without doing any vision processing. This
+		 * is the easiest way to get camera images to the dashboard. Just add this to
+		 * the robotInit() method in your program.
+		 */
+		CameraServer.getInstance().startAutomaticCapture();
 	}
 
 	@Override
