@@ -156,15 +156,15 @@ public class Robot extends TimedRobot {
 
 		
 		if(joystick.getY(Hand.kLeft)*-1>.15) {
-			frontLeft.set(1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 2));
+			frontLeft.set(1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 1/2));
 			//frontRight.set(speed);
-			rearLeft.set(1*Math.pow((Math.abs(joystick.getY(Hand.kLeft))), 2));
+			rearLeft.set(1*Math.pow((Math.abs(joystick.getY(Hand.kLeft))), 1/2));
 			//rearRight.set(speed);
 		}
 		else if(joystick.getY(Hand.kLeft)*-1<-.15) {
-			frontLeft.set(-1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 2));
+			frontLeft.set(-1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 1/2));
 			//frontRight.set(-1*speed);
-			rearLeft.set(-1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 2));
+			rearLeft.set(-1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 1/2));
 			//rearRight.set(-1*speed);
 			
 		}
@@ -178,9 +178,9 @@ public class Robot extends TimedRobot {
 		
 		if(joystick.getY(Hand.kRight)*-1>.15) {
 			//frontLeft.set(speed);
-			frontRight.set(-1*(Math.pow(joystick.getY(Hand.kRight), 2)));
+			frontRight.set(-1*(Math.pow(joystick.getY(Hand.kRight), 1/2)));
 			//rearLeft.set(speed);
-			rearRight.set(-1*(Math.pow(joystick.getY(Hand.kRight), 2)));
+			rearRight.set(-1*(Math.pow(joystick.getY(Hand.kRight), 1/2)));
 		}
 		else if(joystick.getY(Hand.kRight)*-1<-.15) {
 			//frontLeft.set(-1*speed);
