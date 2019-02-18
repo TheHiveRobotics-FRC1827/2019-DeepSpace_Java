@@ -55,53 +55,10 @@ public class Robot extends TimedRobot {
 	SpeedController armLiftMotorRight = new VictorSP(kArmLiftMotorRight);
 	SpeedController armLiftMotorLeft = new VictorSP(kArmLiftMotorLeft);
 	//Solenoid armSol = new Solenoid(7,4); //creates a Solenoid object in slot 7, channel 4.
-	DoubleSolenoid exampleDouble = new DoubleSolenoid(0, 1);
+	DoubleSolenoid solenoidContr = new DoubleSolenoid(0, 1);
 
 	Boolean exampleDoubleBoolean = true;
 	
-	public void piVision()
-	{
-		/*
-		NetworkTable table = NetworkTable.getTable("SmartDashboard");
-
-		NetworkTable.setClientMode();
-		NetworkTable.setTeam(1827);
-		NetworkTable.initialize();
-
-		MjpegServer inputStream = new MjpegServer("MJPEG Server", 1185);
-
-		//UsbCamera camera = new UsbCamera("USB Camera", 0);
-		//camera.setResolution(640, 480);
-
-		UsbCamera camera = new UsbCamera("Coprocessor Camera", 0);
-		inputStream.setSource(camera);
-		camera.setResolution(640, 480);
-
-		CvSink imageSink = new CvSink("CV Image Grbber");
-		imageSink.setSource(camera);
-
-		CvSource imageSource = new CvSource("CV Image Source", VideoMode.PixelFormat.kMJPEG, 640, 480, 30);
-		MjpegServer cvStream = new MjpegServer("CV Image Stream", 1186);
-		cvStream.setSource(imageSource);
-
-		Mat inputImage =new Mat();
-		Mat hsv = new Mat();
-		int i=0;
-		while(true){
-			i++;
-			System.out.println(i);
-			long frameTime = imageSink.grabFrame(inputImage);
-
-			if(frameTime==0) continue;
-
-			Imgproc.cvtColor(inputImage, hsv, Imgproc.COLOR_BGR2HSV);
-
-			imageSource.putFrame(hsv);
-		}
-		*/
-
-	}
-
 	public void directUSBVision()
 	{
 		// From example project "Simple Vision":
@@ -112,42 +69,58 @@ public class Robot extends TimedRobot {
 		 * the robotInit() method in your program.
 		 */
 		//CameraServer.getInstance().startAutomaticCapture();
-		CameraServer server = CameraServer.getInstance();
-		server.startAutomaticCapture();
+		//CameraServer server = CameraServer.getInstance();
+		//server.startAutomaticCapture();
 
 	}
 	
 	@Override
 	public void robotInit() {
-
-		directUSBVision();
-
-		//piVision();
-		
+		directUSBVision();	
 	}
 
 	@Override
 	public void teleopPeriodic() {
-		double speed = 1;
-		//System.out.println(joystick.getY(Hand.kRight));
-		//exampleDouble.
-		// Jackson: not sure exactly how to properly say
-		// "while button is held, value is this, otherwise, value is something else"
-		// but I'm pretty sure you can't use while loops in Teleop or it'll lock it up
-		// because Teleop is a loop itself
+		Timer timer = new Timer();
+
+		if(joystick.getBumperReleased(Hand.kLeft)){
+			timer.reset();
+			while(timer.get()<2){
+				armLiftMotorLeft.set(-1);
+				armLiftMotorRight.set(-1);
+			}
+		}
+
+		if(joystick.getBumperReleased(Hand.kRight)){
+			timer.reset();
+			while(timer.get()<2){
+				armLiftMotorLeft.set(1);
+				armLiftMotorRight.set(1);
+			}
+		}
 
 		// if button is pressed
 		if(joystick.getAButtonReleased())
 		{
-			System.out.println("1: ");
-			// set to forward
+			System.out.println("Solenoid Control");
+
 			if(exampleDoubleBoolean==true){
-				exampleDouble.set(DoubleSolenoid.Value.kForward);
-				exampleDouble.set(DoubleSolenoid.Value.kOff);
+
+				timer.reset();
+
+				while(timer.get()<1)
+					solenoidContr.set(DoubleSolenoid.Value.kForward);
+
+				solenoidContr.set(DoubleSolenoid.Value.kOff);
 				exampleDoubleBoolean = false;
+
 			}else{
-				exampleDouble.set(DoubleSolenoid.Value.kReverse);
-				exampleDouble.set(DoubleSolenoid.Value.kOff);
+				timer.reset();
+				
+				while(timer.get()<1)
+					solenoidContr.set(DoubleSolenoid.Value.kReverse);
+
+				solenoidContr.set(DoubleSolenoid.Value.kOff);
 				exampleDoubleBoolean = true;
 			}
 
@@ -157,89 +130,30 @@ public class Robot extends TimedRobot {
 		
 		if(joystick.getY(Hand.kLeft)*-1>.15) {
 			frontLeft.set(1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 1/2));
-			//frontRight.set(speed);
 			rearLeft.set(1*Math.pow((Math.abs(joystick.getY(Hand.kLeft))), 1/2));
-			//rearRight.set(speed);
 		}
 		else if(joystick.getY(Hand.kLeft)*-1<-.15) {
 			frontLeft.set(-1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 1/2));
-			//frontRight.set(-1*speed);
-			rearLeft.set(-1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 1/2));
-			//rearRight.set(-1*speed);
-			
+			rearLeft.set(-1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 1/2));		
 		}
 		else {
 			frontLeft.set(0);
-			//frontRight.set(0);
 			rearLeft.set(0);
-			//rearRight.set(0);
 		}
 		
 		
 		if(joystick.getY(Hand.kRight)*-1>.15) {
-			//frontLeft.set(speed);
 			frontRight.set(-1*(Math.pow(joystick.getY(Hand.kRight), 1/2)));
-			//rearLeft.set(speed);
 			rearRight.set(-1*(Math.pow(joystick.getY(Hand.kRight), 1/2)));
 		}
 		else if(joystick.getY(Hand.kRight)*-1<-.15) {
-			//frontLeft.set(-1*speed);
 			frontRight.set(1*(Math.pow((joystick.getY(Hand.kRight)), 2)));
-			//rearLeft.set(-1*speed);
 			rearRight.set(1*(Math.pow(joystick.getY(Hand.kRight), 2)));
-			
 		}
 		else {
-			//frontLeft.set(0);
 			frontRight.set(0);
-			//rearLeft.set(0);
 			rearRight.set(0);
 		}
-		// Commenting out this arm code since there's 3
-		// arm motors and we need to redo this logic -Jackson
-		/* if (joystick.getTriggerAxis(Hand.kRight)==1) {
-			arm.set(speed);
-			
-		}
-		else if (joystick.getTriggerAxis(Hand.kLeft)==1) {
-			arm.set(-1*speed);
-		}
-		else {
-			arm.set(0);
-		} */
-		
-		/*if(joystick.getY(Hand.kLeft)*-1>.3) {
-			frontLeft.set(speed);
-			frontRight.set(speed);
-			rearLeft.set(speed);
-			rearRight.set(speed);
-		}
-		else if(joystick.getY(Hand.kLeft)*-1<-.3) {
-			frontLeft.set(-1*speed);
-			frontRight.set(-1*speed);
-			rearLeft.set(-1*speed);
-			rearRight.set(-1*speed);
-			
-		}
-		else if(joystick.getX(Hand.kRight)*-1>.3) {
-			frontLeft.set(speed);
-			frontRight.set(-1*speed);
-			rearLeft.set(speed);
-			rearRight.set(-1*speed);
-		}
-		else if(joystick.getX(Hand.kRight)*-1>.3) {
-			frontLeft.set(-1*speed);
-			frontRight.set(speed);
-			rearLeft.set(-1*speed);
-			rearRight.set(speed);
-		}
-		else {
-			frontLeft.set(0);
-			frontRight.set(0);
-			rearLeft.set(0);
-			rearRight.set(0);
-		}*/
-
 	}
 	
 	@Override
