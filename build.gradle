@@ -47,7 +47,10 @@ repositories {
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
+
+// The string identifier takes the form "<groupId>:<artifactId>:<version>", although Gradle refers to them as "group", "module" and "version".
 dependencies {
+    compile 'com.google.code.gson:gson:2.8.5' // added by Jackson
     compile wpi.deps.wpilib()
     compile wpi.deps.vendor.java()
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
