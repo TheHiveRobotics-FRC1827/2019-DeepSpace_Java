@@ -1,3 +1,5 @@
+package org.usfirst.frc.team1827.robot;
+
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -7,7 +9,7 @@
 
 // Started off as a copy/paste from the example WPILib Camera code --Jackson
 
-import java.io.IOException;
+/* import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -28,7 +30,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.vision.VisionPipeline;
 import edu.wpi.first.vision.VisionThread;
 
-import org.opencv.core.Mat;
+import org.opencv.core.Mat; */
 
 /*
    JSON format:
@@ -65,6 +67,8 @@ import org.opencv.core.Mat;
    }
  */
 
+/*
+Not working yet
 public final class Main {
   private static String configFile = "/boot/frc.json";
 
@@ -82,17 +86,20 @@ public final class Main {
 
   private Main() {
   }
+  */
 
   /**
    * Report parse error.
    */
+  /* Not working yet
   public static void parseError(String str) {
     System.err.println("config error in '" + configFile + "': " + str);
-  }
+  }*/
 
   /**
    * Read single camera configuration.
    */
+  /* Not working yet
   public static boolean readCameraConfig(JsonObject config) {
     CameraConfig cam = new CameraConfig();
 
@@ -119,11 +126,12 @@ public final class Main {
 
     cameraConfigs.add(cam);
     return true;
-  }
+  }*/
 
   /**
    * Read configuration file.
    */
+  /* Not working yet
   @SuppressWarnings("PMD.CyclomaticComplexity")
   public static boolean readConfig() {
     // parse file
@@ -176,12 +184,13 @@ public final class Main {
     }
 
     return true;
-  }
+  }*/
 
   /**
    * Start running the camera.
    */
-  public static VideoSource startCamera(CameraConfig config) {
+  /* Not working yet
+   public static VideoSource startCamera(CameraConfig config) {
     System.out.println("Starting camera '" + config.name + "' on " + config.path);
     CameraServer inst = CameraServer.getInstance();
     UsbCamera camera = new UsbCamera(config.name, config.path);
@@ -197,12 +206,15 @@ public final class Main {
     }
 
     return camera;
-  }
+  }*/
 
   /**
    * Example pipeline.
    */
-  public static class MyPipeline implements VisionPipeline {
+  
+   /* Not working yet
+  public static class MyPipeline implements VisionPipeline
+  {
     public int val;
 
     @Override
@@ -210,11 +222,15 @@ public final class Main {
       val += 1;
     }
   }
+  */
 
   /**
    * Main.
    */
-  public static void main(String... args) {
+  
+   /* Not working yet
+   public static void main(String... args) 
+  {
     if (args.length > 0) {
       configFile = args[0];
     }
@@ -246,12 +262,11 @@ public final class Main {
               new MyPipeline(), pipeline -> {
         // do something with pipeline results
       });
-      /* something like this for GRIP:
-      VisionThread visionThread = new VisionThread(cameras.get(0),
-              new GripPipeline(), pipeline -> {
-        ...
-      });
-       */
+      // something like this for GRIP:
+      //VisionThread visionThread = new VisionThread(cameras.get(0),
+      //        new GripPipeline(), pipeline -> {
+      //  ...
+      //});
       visionThread.start();
     }
 
@@ -263,5 +278,5 @@ public final class Main {
         return;
       }
     }
-  }
-}
+  }*/
+//}
