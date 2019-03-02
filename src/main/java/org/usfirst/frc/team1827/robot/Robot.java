@@ -55,7 +55,8 @@ public class Robot extends TimedRobot {
 	SpeedController armLiftMotorRight = new VictorSP(kArmLiftMotorRight);
 	SpeedController armLiftMotorLeft = new VictorSP(kArmLiftMotorLeft);
 	//Solenoid armSol = new Solenoid(7,4); //creates a Solenoid object in slot 7, channel 4.
-	DoubleSolenoid solenoidContr = new DoubleSolenoid(0, 1);
+	DoubleSolenoid solenoidContrLeft = new DoubleSolenoid(0, 1);
+	DoubleSolenoid solenoidContrRight = new DoubleSolenoid(2,3);
 
 	Boolean exampleDoubleBoolean = true;
 	
@@ -108,19 +109,25 @@ public class Robot extends TimedRobot {
 
 				timer.reset();
 
-				while(timer.get()<1)
-					solenoidContr.set(DoubleSolenoid.Value.kForward);
+				while(timer.get()<1){
+					solenoidContrRight.set(DoubleSolenoid.Value.kForward);
+					solenoidContrLeft.set(DoubleSolenoid.Value.kForward);
+				}
+				solenoidContrRight.set(DoubleSolenoid.Value.kOff);
+				solenoidContrLeft.set(DoubleSolenoid.Value.kOff);
 
-				solenoidContr.set(DoubleSolenoid.Value.kOff);
 				exampleDoubleBoolean = false;
 
 			}else{
 				timer.reset();
 				
-				while(timer.get()<1)
-					solenoidContr.set(DoubleSolenoid.Value.kReverse);
+				while(timer.get()<1){
+					solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
+					solenoidContrLeft.set(DoubleSolenoid.Value.kReverse);
+				}
 
-				solenoidContr.set(DoubleSolenoid.Value.kOff);
+				solenoidContrRight.set(DoubleSolenoid.Value.kOff);
+				solenoidContrLeft.set(DoubleSolenoid.Value.kOff);
 				exampleDoubleBoolean = true;
 			}
 
