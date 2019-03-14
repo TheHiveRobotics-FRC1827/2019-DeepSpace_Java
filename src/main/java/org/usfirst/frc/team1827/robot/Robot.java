@@ -59,6 +59,11 @@ public class Robot extends TimedRobot {
 	DoubleSolenoid solenoidContrRight = new DoubleSolenoid(2,3);
 
 	Boolean exampleDoubleBoolean = true;
+	Boolean pusherSolenoidCheck = true;
+
+	double bumperTimerConstant = 2;
+	double solenoidFliperTimerConstant=2;
+	double solenoidPusherTimerConstant=2;
 	
 	public void directUSBVision()
 	{
@@ -86,7 +91,7 @@ public class Robot extends TimedRobot {
 
 		if(joystick.getBumperReleased(Hand.kLeft)){
 			timer.reset();
-			while(timer.get()<2){
+			while(timer.get()<bumperTimerConstant){
 				armLiftMotorLeft.set(-1);
 				armLiftMotorRight.set(-1);
 			}
@@ -94,7 +99,7 @@ public class Robot extends TimedRobot {
 
 		if(joystick.getBumperReleased(Hand.kRight)){
 			timer.reset();
-			while(timer.get()<2){
+			while(timer.get()<bumperTimerConstant){
 				armLiftMotorLeft.set(1);
 				armLiftMotorRight.set(1);
 			}
@@ -109,7 +114,7 @@ public class Robot extends TimedRobot {
 
 				timer.reset();
 
-				while(timer.get()<1){
+				while(timer.get()<solenoidFliperTimerConstant){
 					solenoidContrRight.set(DoubleSolenoid.Value.kForward);
 					solenoidContrLeft.set(DoubleSolenoid.Value.kForward);
 				}
@@ -121,7 +126,7 @@ public class Robot extends TimedRobot {
 			}else{
 				timer.reset();
 				
-				while(timer.get()<1){
+				while(timer.get()<solenoidFliperTimerConstant){
 					solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
 					solenoidContrLeft.set(DoubleSolenoid.Value.kReverse);
 				}
@@ -133,7 +138,48 @@ public class Robot extends TimedRobot {
 
 		}
 
+		// if button is pressed
+		if(joystick.getBButtonReleased())
+		{
+			System.out.println("Solenoid Control");
 
+			if(pusherSolenoidCheck==true){
+
+				timer.reset();
+
+				while(timer.get()<solenoidPusherTimerConstant){
+					solenoidContrRight.set(DoubleSolenoid.Value.kForward);
+					solenoidContrLeft.set(DoubleSolenoid.Value.kForward);
+				}
+				solenoidContrRight.set(DoubleSolenoid.Value.kOff);
+				solenoidContrLeft.set(DoubleSolenoid.Value.kOff);
+
+				pusherSolenoidCheck = false;
+
+			}else{
+				timer.reset();
+				
+				while(timer.get()<solenoidPusherTimerConstant){
+					solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
+					solenoidContrLeft.set(DoubleSolenoid.Value.kReverse);
+				}
+
+				solenoidContrRight.set(DoubleSolenoid.Value.kOff);
+				solenoidContrLeft.set(DoubleSolenoid.Value.kOff);
+				pusherSolenoidCheck = true;
+			}
+
+		}
+
+		if(joystick.getYButtonPressed() && joystick.getTriggerAxis(Hand.kRight)>.75){
+			bumperTimerConstant=bumperTimerConstant+.25;
+			System.out.print(bumperTimerConstant);
+		}
+
+		if(joystick.getYButtonPressed() && joystick.getTriggerAxis(Hand.kLeft)>.75){
+			bumperTimerConstant=bumperTimerConstant-.25;
+			System.out.print(bumperTimerConstant);
+		}
 		
 		if(joystick.getY(Hand.kLeft)*-1>.15) {
 			frontLeft.set(1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 1/2));
