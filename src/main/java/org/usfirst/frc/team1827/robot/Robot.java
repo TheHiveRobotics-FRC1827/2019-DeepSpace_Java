@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
@@ -51,6 +52,11 @@ public class Robot extends TimedRobot {
 	SpeedController frontRight = new VictorSP(kFrontRightChannel);
 	SpeedController rearRight = new VictorSP(kRearRightChannel);
 	XboxController joystick = new XboxController(0);
+
+	//IF CONTROLLER DOESN'T WORK, UN-COMMIT THIS DELETE THE xboxcontroller line 
+	//Joystick joystick = new Joystick(0);
+
+
 	SpeedController armBallMotor = new VictorSP(kArmBallMotor);
 	SpeedController armLiftMotorRight = new VictorSP(kArmLiftMotorRight);
 	SpeedController armLiftMotorLeft = new VictorSP(kArmLiftMotorLeft);
@@ -61,10 +67,11 @@ public class Robot extends TimedRobot {
 	Boolean exampleDoubleBoolean = true;
 	Boolean pusherSolenoidCheck = true;
 
-	double bumperTimerConstant = 2;
-	double solenoidFliperTimerConstant=2;
-	double solenoidPusherTimerConstant=2;
-	
+	double bumperTimerConstant = 1;
+	double solenoidFliperTimerConstant=1;
+	double solenoidPusherTimerConstant=1;
+	double driveScaling = 2;
+
 	public void directUSBVision()
 	{
 		// From example project "Simple Vision":
@@ -182,12 +189,12 @@ public class Robot extends TimedRobot {
 		}
 		
 		if(joystick.getY(Hand.kLeft)*-1>.15) {
-			frontLeft.set(1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 1/2));
-			rearLeft.set(1*Math.pow((Math.abs(joystick.getY(Hand.kLeft))), 1/2));
+			frontLeft.set(1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 1/driveScaling));
+			rearLeft.set(1*Math.pow((Math.abs(joystick.getY(Hand.kLeft))), 1/driveScaling));
 		}
 		else if(joystick.getY(Hand.kLeft)*-1<-.15) {
-			frontLeft.set(-1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 1/2));
-			rearLeft.set(-1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 1/2));		
+			frontLeft.set(-1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 1/driveScaling));
+			rearLeft.set(-1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 1/driveScaling));		
 		}
 		else {
 			frontLeft.set(0);
@@ -196,12 +203,12 @@ public class Robot extends TimedRobot {
 		
 		
 		if(joystick.getY(Hand.kRight)*-1>.15) {
-			frontRight.set(-1*(Math.pow(joystick.getY(Hand.kRight), 1/2)));
-			rearRight.set(-1*(Math.pow(joystick.getY(Hand.kRight), 1/2)));
+			frontRight.set(-1*(Math.pow(joystick.getY(Hand.kRight), 1/driveScaling)));
+			rearRight.set(-1*(Math.pow(joystick.getY(Hand.kRight), 1/driveScaling)));
 		}
 		else if(joystick.getY(Hand.kRight)*-1<-.15) {
-			frontRight.set(1*(Math.pow((joystick.getY(Hand.kRight)), 2)));
-			rearRight.set(1*(Math.pow(joystick.getY(Hand.kRight), 2)));
+			frontRight.set(1*(Math.pow((joystick.getY(Hand.kRight)), 1/driveScaling)));
+			rearRight.set(1*(Math.pow(joystick.getY(Hand.kRight), 1/driveScaling)));
 		}
 		else {
 			frontRight.set(0);
