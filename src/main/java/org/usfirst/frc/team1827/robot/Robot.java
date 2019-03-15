@@ -47,12 +47,11 @@ public class Robot extends TimedRobot {
 	SpeedController armLiftMotorRight = new VictorSP(kArmLiftMotorRight);
 	SpeedController armLiftMotorLeft = new VictorSP(kArmLiftMotorLeft);
 	//Solenoid armSol = new Solenoid(7,4); //creates a Solenoid object in slot 7, channel 4.
-	DoubleSolenoid solenoidContrLeft = new DoubleSolenoid(0, 1);
-	DoubleSolenoid solenoidContrRight = new DoubleSolenoid(2,3);
+	
 	DoubleSolenoid pusher = new DoubleSolenoid(6, 7);
 	Solenoid climber = new Solenoid(5);
 	Compressor c = new Compressor(0);
-	Timer timer = new Timer();
+	
 
 	Boolean exampleDoubleBoolean = true;
 	Boolean pusherSolenoidCheck = true;
@@ -66,6 +65,8 @@ public class Robot extends TimedRobot {
 	final double solenoidPusherTimerConstant=1;
 	final double climberTimer=1;
 	double driveScaling = 2;
+
+	KickerPistons kickerPistonControl = new KickerPistons();
 
 	public void directUSBVision()
 	{
@@ -81,27 +82,28 @@ public class Robot extends TimedRobot {
 		server.startAutomaticCapture();
 
 	}
+
+
 	
 	@Override
 	public void robotInit() {
 		directUSBVision();
 		//c.setClosedLoopControl(true);
 		
-		solenoidContrLeft.set(DoubleSolenoid.Value.kReverse);
-		solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
+		// solenoidContrLeft.set(DoubleSolenoid.Value.kReverse);
+		// solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
+		kickerPistonControl.retract();
 	}
 
 	@Override
 	public void teleopInit()
 	{
-		solenoidContrLeft.set(DoubleSolenoid.Value.kReverse);
-		solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
+		kickerPistonControl.retract();
 	}
 
 	@Override
 	public void autonomousInit() {
-		solenoidContrLeft.set(DoubleSolenoid.Value.kReverse);
-		solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
+		kickerPistonControl.retract();
 	}
 
 	public void armLiftControl(boolean upButton, boolean downButton)
@@ -124,22 +126,7 @@ public class Robot extends TimedRobot {
 
 	}
 
-	public void kickerPistonControl(boolean button)
-	{
-		if(joystick.getAButtonPressed())
-		{
-			timer.reset();
-			timer.start();
-			solenoidContrLeft.set(DoubleSolenoid.Value.kForward);
-			solenoidContrRight.set(DoubleSolenoid.Value.kForward);
-		}
-
-		if(timer.get() > 1)
-		{
-			solenoidContrLeft.set(DoubleSolenoid.Value.kReverse);
-			solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
-		}
-	}
+	
 
 	public void tankDriveControl(double leftJoystickValue, double rightJoystickValue)
 	{
@@ -173,7 +160,7 @@ public class Robot extends TimedRobot {
 
 		//kReverse = pistons out
 		//kForward = pistons in
-		kickerPistonControl(joystick.getAButtonPressed());
+		kickerPistonControl.kick(joystick.getAButtonPressed());
 
 		tankDriveControl(joystick.getY(Hand.kLeft), Math.abs(joystick.getY(Hand.kRight)));
 	}
@@ -185,7 +172,7 @@ public class Robot extends TimedRobot {
 
 		//kReverse = pistons out
 		//kForward = pistons in
-		kickerPistonControl(joystick.getAButtonPressed());
+		kickerPistonControl.kick(joystick.getAButtonPressed());
 
 		tankDriveControl(joystick.getY(Hand.kLeft), Math.abs(joystick.getY(Hand.kRight)));
 	}
