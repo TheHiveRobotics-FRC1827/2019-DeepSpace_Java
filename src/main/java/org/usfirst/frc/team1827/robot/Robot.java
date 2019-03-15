@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 //import edu.wpi.first.wpilibj.Joystick;
 //import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -27,8 +26,7 @@ public class Robot extends TimedRobot {
 	private static final int kFrontRightChannel = 4;
 	private static final int kRearRightChannel = 3;
 	private static final int kArmBallMotor = 9;
-	private static final int kArmLiftMotorRight = 8;
-	private static final int kArmLiftMotorLeft = 7;
+	
 	private static final int pneumaticTestFwdCh = 0;
 	private static final int pneumaticTestRevCh = 1;
 	
@@ -44,12 +42,11 @@ public class Robot extends TimedRobot {
 
 
 	SpeedController armBallMotor = new VictorSP(kArmBallMotor);
-	SpeedController armLiftMotorRight = new VictorSP(kArmLiftMotorRight);
-	SpeedController armLiftMotorLeft = new VictorSP(kArmLiftMotorLeft);
+	
 	//Solenoid armSol = new Solenoid(7,4); //creates a Solenoid object in slot 7, channel 4.
 	
-	DoubleSolenoid pusher = new DoubleSolenoid(6, 7);
-	Solenoid climber = new Solenoid(5);
+	//DoubleSolenoid pusher = new DoubleSolenoid(6, 7);
+	//Solenoid climber = new Solenoid(5);
 	Compressor c = new Compressor(0);
 	
 
@@ -58,8 +55,7 @@ public class Robot extends TimedRobot {
 	Boolean climberBoolean = true;
 
 
-	final double armUpSpeed = 0.75;
-	final double armDownSpeed = 0.25;
+	
 	final double bumperTimerConstant = 1;
 	final double solenoidFliperTimerConstant=1;
 	final double solenoidPusherTimerConstant=1;
@@ -67,67 +63,31 @@ public class Robot extends TimedRobot {
 	double driveScaling = 2;
 
 	KickerPistons kickerPistonControl = new KickerPistons();
-
-	public void directUSBVision()
-	{
-		// From example project "Simple Vision":
-		/**
-		 * Uses the CameraServer class to automatically capture video from a USB webcam
-		 * and send it to the FRC dashboard without doing any vision processing. This
-		 * is the easiest way to get camera images to the dashboard. Just add this to
-		 * the robotInit() method in your program.
-		 */
-		//CameraServer.getInstance().startAutomaticCapture();
-		CameraServer server = CameraServer.getInstance();
-		server.startAutomaticCapture();
-
-	}
+	Lifter lifterArm = new Lifter();
+	HiveRobotCamera robotCamera = new HiveRobotCamera();
 
 
-	
 	@Override
-	public void robotInit() {
-		directUSBVision();
-		//c.setClosedLoopControl(true);
-		
-		// solenoidContrLeft.set(DoubleSolenoid.Value.kReverse);
-		// solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
+	public void robotInit()
+	{
+		robotCamera.initialize();
 		kickerPistonControl.retract();
+		lifterArm.stop();
 	}
 
 	@Override
 	public void teleopInit()
 	{
 		kickerPistonControl.retract();
+		lifterArm.stop();
 	}
 
 	@Override
 	public void autonomousInit() {
 		kickerPistonControl.retract();
+		lifterArm.stop();
 	}
-
-	public void armLiftControl(boolean upButton, boolean downButton)
-	{
-		if(upButton)
-		{
-			armLiftMotorLeft.set(-armUpSpeed);
-			armLiftMotorRight.set(armUpSpeed);
-		}
-		else if(downButton)
-		{
-			armLiftMotorLeft.set(armDownSpeed);
-			armLiftMotorRight.set(-armDownSpeed);
-		}
-		else
-		{
-			armLiftMotorLeft.set(0);
-			armLiftMotorRight.set(0);
-		}
-
-	}
-
 	
-
 	public void tankDriveControl(double leftJoystickValue, double rightJoystickValue)
 	{
 		if(Math.abs(joystick.getY(Hand.kLeft)) > 0.15)
@@ -156,7 +116,19 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic()
 	{
-		armLiftControl(joystick.getBumper(Hand.kLeft), joystick.getBumper(Hand.kRight));		
+		// TODO should this be in its own class or done directly in teleop?
+		if(joystick.getBumper(Hand.kLeft))
+        {
+            lifterArm.lift();
+        }
+        else if(joystick.getBumper(Hand.kRight))
+        {            
+            lifterArm.goDown();
+        }
+        else
+        {
+            lifterArm.stop();
+        }		
 
 		//kReverse = pistons out
 		//kForward = pistons in
@@ -167,8 +139,20 @@ public class Robot extends TimedRobot {
 	
 	@Override
 	public void autonomousPeriodic()
-	{
-		armLiftControl(joystick.getBumper(Hand.kLeft), joystick.getBumper(Hand.kRight));		
+	{	
+		// TODO should this be in its own class or done directly in teleop?
+		if(joystick.getBumper(Hand.kLeft))
+        {
+            lifterArm.lift();
+        }
+        else if(joystick.getBumper(Hand.kRight))
+        {            
+            lifterArm.goDown();
+        }
+        else
+        {
+            lifterArm.stop();
+        }		
 
 		//kReverse = pistons out
 		//kForward = pistons in
