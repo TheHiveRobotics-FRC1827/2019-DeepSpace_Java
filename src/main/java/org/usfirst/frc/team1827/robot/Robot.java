@@ -167,8 +167,8 @@ public class Robot extends TimedRobot {
 	}
 
 	@Override
-	public void teleopPeriodic() {
-
+	public void teleopPeriodic()
+	{
 		armLiftControl(joystick.getBumper(Hand.kLeft), joystick.getBumper(Hand.kRight));		
 
 		//kReverse = pistons out
@@ -179,9 +179,14 @@ public class Robot extends TimedRobot {
 	}
 	
 	@Override
-	public void autonomousPeriodic() {
+	public void autonomousPeriodic()
+	{
+		armLiftControl(joystick.getBumper(Hand.kLeft), joystick.getBumper(Hand.kRight));		
 
-		teleopPeriodic();
+		//kReverse = pistons out
+		//kForward = pistons in
+		kickerPistonControl(joystick.getAButtonPressed());
 
+		tankDriveControl(joystick.getY(Hand.kLeft), Math.abs(joystick.getY(Hand.kRight)));
 	}
 }
