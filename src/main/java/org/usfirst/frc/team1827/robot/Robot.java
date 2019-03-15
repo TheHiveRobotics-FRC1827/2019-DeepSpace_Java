@@ -60,6 +60,7 @@ public class Robot extends TimedRobot {
 
 
 	final double armUpSpeed = 0.75;
+	final double armDownSpeed = 0.25;
 	final double bumperTimerConstant = 1;
 	final double solenoidFliperTimerConstant=1;
 	final double solenoidPusherTimerConstant=1;
@@ -103,29 +104,28 @@ public class Robot extends TimedRobot {
 		solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
 	}
 
-	@Override
-	public void teleopPeriodic() {
-	
-		if(joystick.getBumper(Hand.kLeft))
+	public void armLiftControl(boolean upButton, boolean downButton)
+	{
+		if(upButton)
 		{
 			armLiftMotorLeft.set(-armUpSpeed);
 			armLiftMotorRight.set(armUpSpeed);
 		}
-		else if(joystick.getBumper(Hand.kRight))
+		else if(downButton)
 		{
-			armLiftMotorLeft.set(.25);
-			armLiftMotorRight.set(-.25);
+			armLiftMotorLeft.set(armDownSpeed);
+			armLiftMotorRight.set(-armDownSpeed);
 		}
 		else
 		{
 			armLiftMotorLeft.set(0);
 			armLiftMotorRight.set(0);
 		}
-		
 
-		//kReverse = pistons out
-		//kForward = pistons in
-		
+	}
+
+	public void kickerPistonControl(boolean button)
+	{
 		if(joystick.getAButtonPressed())
 		{
 			timer.reset();
@@ -139,7 +139,18 @@ public class Robot extends TimedRobot {
 			solenoidContrLeft.set(DoubleSolenoid.Value.kReverse);
 			solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
 		}
-		
+	}
+
+	@Override
+	public void teleopPeriodic() {
+
+		armLiftControl(joystick.getBumper(Hand.kLeft), joystick.getBumper(Hand.kRight));		
+
+		//kReverse = pistons out
+		//kForward = pistons in
+
+		kickerPistonControl(joystick.getAButtonPressed());
+
 		/*
 		if(joystick.getBumperReleased(Hand.kLeft)){
 			System.out.print("Arm Down");
