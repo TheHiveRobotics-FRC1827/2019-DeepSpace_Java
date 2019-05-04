@@ -21,20 +21,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.cameraserver.CameraServer;
 
 public class Robot extends TimedRobot {
-	private static final int kFrontLeftChannel = 6;
-	private static final int kRearLeftChannel = 5;
-	private static final int kFrontRightChannel = 4;
-	private static final int kRearRightChannel = 3;
-	private static final int kArmBallMotor = 9;
+	
 	
 	private static final int pneumaticTestFwdCh = 0;
 	private static final int pneumaticTestRevCh = 1;
+	private static final int kArmBallMotor = 9;
 	
 	
-	SpeedController frontLeft = new PWMVictorSPX(kFrontLeftChannel);
-	SpeedController rearLeft = new PWMVictorSPX(kRearLeftChannel);
-	SpeedController frontRight = new VictorSP(kFrontRightChannel);
-	SpeedController rearRight = new VictorSP(kRearRightChannel);
 	XboxController joystick = new XboxController(0);
 
 	//IF CONTROLLER DOESN'T WORK, UN-COMMIT THIS DELETE THE xboxcontroller line 
@@ -65,6 +58,7 @@ public class Robot extends TimedRobot {
 	KickerPistons kickerPistonControl = new KickerPistons();
 	Lifter lifterArm = new Lifter();
 	HiveRobotCamera robotCamera = new HiveRobotCamera();
+	TankDrivetrain tankDrive = new TankDrivetrain();
 
 
 	@Override
@@ -73,6 +67,7 @@ public class Robot extends TimedRobot {
 		robotCamera.initialize();
 		kickerPistonControl.retract();
 		lifterArm.stop();
+		tankDrive.stopAll();
 	}
 
 	@Override
@@ -80,37 +75,14 @@ public class Robot extends TimedRobot {
 	{
 		kickerPistonControl.retract();
 		lifterArm.stop();
+		tankDrive.stopAll();
 	}
 
 	@Override
 	public void autonomousInit() {
 		kickerPistonControl.retract();
 		lifterArm.stop();
-	}
-	
-	public void tankDriveControl(double leftJoystickValue, double rightJoystickValue)
-	{
-		if(Math.abs(joystick.getY(Hand.kLeft)) > 0.15)
-		{
-			frontLeft.set(-joystick.getY(Hand.kLeft));
-			rearLeft.set(-joystick.getY(Hand.kLeft));
-		}
-		else
-		{
-			frontLeft.set(0);
-			rearLeft.set(0);
-		}
-		
-		if(Math.abs(joystick.getY(Hand.kRight)) > 0.15)
-		{
-			frontRight.set(joystick.getY(Hand.kRight));
-			rearRight.set(joystick.getY(Hand.kRight));
-		}
-		else
-		{
-			frontRight.set(0);
-			rearRight.set(0);
-		}
+		tankDrive.stopAll();
 	}
 
 	@Override
@@ -134,7 +106,9 @@ public class Robot extends TimedRobot {
 		//kForward = pistons in
 		kickerPistonControl.kick(joystick.getAButtonPressed());
 
-		tankDriveControl(joystick.getY(Hand.kLeft), Math.abs(joystick.getY(Hand.kRight)));
+		// TODO is the right side supposed to be Math.abs(joystick.getY(Hand.kRight)) ?? or no Math.abs?
+		tankDrive.controlInput(joystick.getY(Hand.kLeft), Math.abs(joystick.getY(Hand.kRight)));
+		
 	}
 	
 	@Override
@@ -158,6 +132,7 @@ public class Robot extends TimedRobot {
 		//kForward = pistons in
 		kickerPistonControl.kick(joystick.getAButtonPressed());
 
-		tankDriveControl(joystick.getY(Hand.kLeft), Math.abs(joystick.getY(Hand.kRight)));
+		// TODO is the right side supposed to be Math.abs(joystick.getY(Hand.kRight)) ?? or no Math.abs?
+		tankDrive.controlInput(joystick.getY(Hand.kLeft), Math.abs(joystick.getY(Hand.kRight)));
 	}
 }
