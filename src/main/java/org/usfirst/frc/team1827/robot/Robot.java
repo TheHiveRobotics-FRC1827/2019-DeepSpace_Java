@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.VictorSP;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
@@ -63,15 +64,24 @@ public class Robot extends TimedRobot {
 	//Solenoid armSol = new Solenoid(7,4); //creates a Solenoid object in slot 7, channel 4.
 	DoubleSolenoid solenoidContrLeft = new DoubleSolenoid(0, 1);
 	DoubleSolenoid solenoidContrRight = new DoubleSolenoid(2,3);
+	DoubleSolenoid pusher = new DoubleSolenoid(6, 7);
+	Solenoid climber = new Solenoid(5);
+	Compressor c = new Compressor(0);
+	Timer timer = new Timer();
+	Timer flapperTimer = new Timer();
 
 	Boolean exampleDoubleBoolean = true;
 	Boolean pusherSolenoidCheck = true;
+	Boolean climberBoolean = true;
 
-	double bumperTimerConstant = 1;
-	double solenoidFliperTimerConstant=1;
-	double solenoidPusherTimerConstant=1;
+
+	final double armUpSpeed = 0.45;
+	final double bumperTimerConstant = 1;
+	final double solenoidFliperTimerConstant=1;
+	final double solenoidPusherTimerConstant=1;
+	final double climberTimer=1;
 	double driveScaling = 2;
-
+	boolean climberState=false;
 	public void directUSBVision()
 	{
 		// From example project "Simple Vision":
@@ -82,40 +92,127 @@ public class Robot extends TimedRobot {
 		 * the robotInit() method in your program.
 		 */
 		//CameraServer.getInstance().startAutomaticCapture();
-		//CameraServer server = CameraServer.getInstance();
-		//server.startAutomaticCapture();
+		CameraServer server = CameraServer.getInstance();
+		server.startAutomaticCapture();
 
 	}
 	
 	@Override
 	public void robotInit() {
-		//directUSBVision();	
+		directUSBVision();
+		//c.setClosedLoopControl(true);
+		
+		solenoidContrLeft.set(DoubleSolenoid.Value.kReverse);
+		solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
+		pusher.set(DoubleSolenoid.Value.kReverse);
+		climberState=false;
+	}
+
+	@Override
+	public void teleopInit()
+	{
+		solenoidContrLeft.set(DoubleSolenoid.Value.kReverse);
+		solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
+		pusher.set(DoubleSolenoid.Value.kReverse);
+		climberState=false;
+	}
+
+	@Override
+	public void autonomousInit() {
+		solenoidContrLeft.set(DoubleSolenoid.Value.kReverse);
+		solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
+		pusher.set(DoubleSolenoid.Value.kReverse);
+		climberState=false;
 	}
 
 	@Override
 	public void teleopPeriodic() {
-		Timer timer = new Timer();
+	
+		if(joystick.getBumper(Hand.kLeft))
+		{
+			armLiftMotorLeft.set(-armUpSpeed);
+			armLiftMotorRight.set(armUpSpeed);
+		}
+		else if(joystick.getBumper(Hand.kRight))
+		{
+			armLiftMotorLeft.set(.25);
+			armLiftMotorRight.set(-.25);
+		}
+		else
+		{
+			armLiftMotorLeft.set(0);
+			armLiftMotorRight.set(0);
+		}
+		
 
+		//kReverse = pistons out
+		//kForward = pistons in
+		
+		if(joystick.getAButtonPressed())
+		{
+			timer.reset();
+			timer.start();
+			solenoidContrLeft.set(DoubleSolenoid.Value.kForward);
+			solenoidContrRight.set(DoubleSolenoid.Value.kForward);
+		}
+
+		if(timer.get() > 1)
+		{
+			solenoidContrLeft.set(DoubleSolenoid.Value.kReverse);
+			solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
+		}
+
+		
+		if(joystick.getBButtonPressed() && joystick.getBumper(Hand.kLeft)){
+			flapperTimer.reset();
+			flapperTimer.start();
+
+			pusher.set(DoubleSolenoid.Value.kForward);
+		}
+		
+		if(flapperTimer.get()>.5){
+			pusher.set(DoubleSolenoid.Value.kReverse);
+		}
+		
+	
+		
+		 if(joystick.getXButtonPressed()){
+		 	if(climberState){
+		 		climberState=false;
+		 	}else{
+		 		climberState=true;
+		 	}
+		 }
+
+		 climber.set(climberState);
+		
+		
+		
+		/*
 		if(joystick.getBumperReleased(Hand.kLeft)){
+			System.out.print("Arm Down");
+
 			timer.reset();
 			while(timer.get()<bumperTimerConstant){
-				armLiftMotorLeft.set(-1);
-				armLiftMotorRight.set(-1);
+				armLiftMotorLeft.set(-.5);
+				armLiftMotorRight.set(.5);
 			}
 		}
 
 		if(joystick.getBumperReleased(Hand.kRight)){
+			System.out.print("Arm Up");
+
 			timer.reset();
 			while(timer.get()<bumperTimerConstant){
-				armLiftMotorLeft.set(1);
-				armLiftMotorRight.set(1);
+				armLiftMotorLeft.set(.5);
+				armLiftMotorRight.set(-.5);
 			}
-		}
-
+		}*/
+		/*
 		// if button is pressed
 		if(joystick.getAButtonReleased())
 		{
-			System.out.println("Solenoid Control");
+			System.out.println("Solenoids OUt");
 
 			if(exampleDoubleBoolean==true){
 
@@ -148,18 +245,17 @@ public class Robot extends TimedRobot {
 		// if button is pressed
 		if(joystick.getBButtonReleased())
 		{
-			System.out.println("Solenoid Control");
+			System.out.println("Flapper");
 
 			if(pusherSolenoidCheck==true){
 
 				timer.reset();
 
 				while(timer.get()<solenoidPusherTimerConstant){
-					solenoidContrRight.set(DoubleSolenoid.Value.kForward);
-					solenoidContrLeft.set(DoubleSolenoid.Value.kForward);
+					pusher.set(DoubleSolenoid.Value.kForward);
+					
 				}
-				solenoidContrRight.set(DoubleSolenoid.Value.kOff);
-				solenoidContrLeft.set(DoubleSolenoid.Value.kOff);
+				pusher.set(DoubleSolenoid.Value.kOff);
 
 				pusherSolenoidCheck = false;
 
@@ -167,15 +263,23 @@ public class Robot extends TimedRobot {
 				timer.reset();
 				
 				while(timer.get()<solenoidPusherTimerConstant){
-					solenoidContrRight.set(DoubleSolenoid.Value.kReverse);
-					solenoidContrLeft.set(DoubleSolenoid.Value.kReverse);
+					pusher.set(DoubleSolenoid.Value.kReverse);
 				}
 
-				solenoidContrRight.set(DoubleSolenoid.Value.kOff);
-				solenoidContrLeft.set(DoubleSolenoid.Value.kOff);
+				pusher.set(DoubleSolenoid.Value.kOff);
 				pusherSolenoidCheck = true;
 			}
 
+		}
+
+		// if button is pressed
+		
+		if(joystick.getXButtonPressed())
+		{
+			System.out.print("climber");
+			climber.set(true);
+		}else{
+			climber.set(false);
 		}
 
 		if(joystick.getYButtonPressed() && joystick.getTriggerAxis(Hand.kRight)>.75){
@@ -187,7 +291,54 @@ public class Robot extends TimedRobot {
 			bumperTimerConstant=bumperTimerConstant-.25;
 			System.out.print(bumperTimerConstant);
 		}
+		*/
 		
+		
+		if(Math.abs(joystick.getY(Hand.kLeft)) > 0.15)
+		{
+			frontLeft.set(-joystick.getY(Hand.kLeft));
+			rearLeft.set(-joystick.getY(Hand.kLeft));
+		}
+		else
+		{
+			frontLeft.set(0);
+			rearLeft.set(0);
+		}
+		
+		if(Math.abs(joystick.getY(Hand.kRight)) > 0.15)
+		{
+			frontRight.set(joystick.getY(Hand.kRight));
+			rearRight.set(joystick.getY(Hand.kRight));
+		}
+		else
+		{
+			frontRight.set(0);
+			rearRight.set(0);
+		}
+		/*
+		if(Math.abs(joystick.getY(Hand.kLeft)) > 0.15)
+		{
+			frontLeft.set(-Math.sqrt(joystick.getY(Hand.kLeft)));
+			rearLeft.set(-Math.sqrt(joystick.getY(Hand.kLeft)));
+		}
+		else
+		{
+			frontLeft.set(0);
+			rearLeft.set(0);
+		}
+		
+		if(Math.abs(joystick.getY(Hand.kRight)) > 0.15)
+		{
+			frontRight.set(Math.sqrt(joystick.getY(Hand.kRight)));
+			rearRight.set(Math.sqrt(joystick.getY(Hand.kRight)));
+		}
+		else
+		{
+			frontRight.set(0);
+			rearRight.set(0);
+		}
+		*/
+		/*
 		if(joystick.getY(Hand.kLeft)*-1>.15) {
 			frontLeft.set(1*Math.pow(Math.abs(joystick.getY(Hand.kLeft)), 1/driveScaling));
 			rearLeft.set(1*Math.pow((Math.abs(joystick.getY(Hand.kLeft))), 1/driveScaling));
@@ -200,25 +351,63 @@ public class Robot extends TimedRobot {
 			frontLeft.set(0);
 			rearLeft.set(0);
 		}
-		
-		
+		//joystick.ge
+		System.out.println(joystick.getY(Hand.kRight));
 		if(joystick.getY(Hand.kRight)*-1>.15) {
+			System.out.print("Right Forward?");
+			// frontRight.set(1);
+			// rearRight.set(1);
 			frontRight.set(-1*(Math.pow(joystick.getY(Hand.kRight), 1/driveScaling)));
 			rearRight.set(-1*(Math.pow(joystick.getY(Hand.kRight), 1/driveScaling)));
 		}
 		else if(joystick.getY(Hand.kRight)*-1<-.15) {
+			System.out.print("Right Back?");
 			frontRight.set(1*(Math.pow((joystick.getY(Hand.kRight)), 1/driveScaling)));
 			rearRight.set(1*(Math.pow(joystick.getY(Hand.kRight), 1/driveScaling)));
 		}
-		else {
+		else{
 			frontRight.set(0);
 			rearRight.set(0);
-		}
+		}*/
 	}
 	
 	@Override
 	public void autonomousPeriodic() {
-		
 
+		teleopPeriodic();
+
+	}
+
+	public void haloDriving(){
+		if(Math.abs(joystick.getY(Hand.kLeft)) > 0.15)
+		{
+			frontLeft.set(-joystick.getY(Hand.kLeft));
+			rearLeft.set(-joystick.getY(Hand.kLeft));
+			frontRight.set(joystick.getY(Hand.kLeft));
+			rearRight.set(joystick.getY(Hand.kLeft));
+		}
+		else
+		{
+			frontLeft.set(0);
+			rearLeft.set(0);
+			frontRight.set(0);
+			frontLeft.set(0);
+		}
+		
+		if(joystick.getY(Hand.kRight) > 0.35)
+		{
+			frontLeft.set(-joystick.getY(Hand.kRight));
+			rearLeft.set(-joystick.getY(Hand.kRight));
+			frontRight.set(joystick.getY(Hand.kRight));
+			rearRight.set(joystick.getY(Hand.kRight));
+
+		}
+		else
+		{
+			frontLeft.set(0);
+			rearLeft.set(0);
+			frontRight.set(0);
+			frontLeft.set(0);
+		}
 	}
 }
