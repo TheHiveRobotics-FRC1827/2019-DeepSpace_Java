@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.cscore.MjpegServer;
 //import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -37,21 +38,21 @@ import edu.wpi.first.cameraserver.CameraServer;
  * it contains the code necessary to operate a robot with tank drive.
  */
 public class Robot extends TimedRobot {
-	private static final int kFrontLeftChannel = 6;
-	private static final int kRearLeftChannel = 5;
-	private static final int kFrontRightChannel = 4;
-	private static final int kRearRightChannel = 3;
+	private static final int kFrontLeftChannel = 4;
+	private static final int kRearLeftChannel = 2;
+	private static final int kFrontRightChannel = 3;
+	private static final int kRearRightChannel = 1;
 	private static final int kArmBallMotor = 9;
 	private static final int kArmLiftMotorRight = 8;
 	private static final int kArmLiftMotorLeft = 7;
-	private static final int pneumaticTestFwdCh = 0;
-	private static final int pneumaticTestRevCh = 1;
+	//private static final int pneumaticTestFwdCh = 0;
+	//private static final int pneumaticTestRevCh = 1;
 	
 	
-	SpeedController frontLeft = new PWMVictorSPX(kFrontLeftChannel);
-	SpeedController rearLeft = new PWMVictorSPX(kRearLeftChannel);
-	SpeedController frontRight = new VictorSP(kFrontRightChannel);
-	SpeedController rearRight = new VictorSP(kRearRightChannel);
+	SpeedController frontLeft = new Spark(kFrontLeftChannel);
+	SpeedController rearLeft = new Spark(kRearLeftChannel);
+	SpeedController frontRight = new Spark(kFrontRightChannel);
+	SpeedController rearRight = new Spark(kRearRightChannel);
 	XboxController joystick = new XboxController(0);
 
 	//IF CONTROLLER DOESN'T WORK, UN-COMMIT THIS DELETE THE xboxcontroller line 
