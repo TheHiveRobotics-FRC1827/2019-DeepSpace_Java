@@ -379,36 +379,47 @@ public class Robot extends TimedRobot {
 
 	}
 
-	public void haloDriving(){
-		if(Math.abs(joystick.getY(Hand.kLeft)) > 0.15)
-		{
-			frontLeft.set(-joystick.getY(Hand.kLeft));
-			rearLeft.set(-joystick.getY(Hand.kLeft));
-			frontRight.set(joystick.getY(Hand.kLeft));
-			rearRight.set(joystick.getY(Hand.kLeft));
-		}
-		else
-		{
-			frontLeft.set(0);
-			rearLeft.set(0);
-			frontRight.set(0);
-			frontLeft.set(0);
-		}
+// 	public void haloDriving(){
+// 		if(Math.abs(joystick.getY(Hand.kLeft)) > 0.15)
+// 		{
+// 			frontLeft.set(joystick.getY(Hand.kLeft));
+// 			rearLeft.set(joystick.getY(Hand.kLeft));
+// 			//frontRight.set(-joystick.getY(Hand.kLeft));
+// 			//rearRight.set(-joystick.getY(Hand.kLeft));
+// 		}
+// 		else if(Math.abs(joystick.getY(Hand.kLeft)) < -0.15)
+// 		{ 
+// 			frontLeft.set(-joystick.getY(Hand.kLeft));
+// 			rearLeft.set(-joystick.getY(Hand.kLeft));
+// 		}
+// 		else
+// 		{
+// 			frontLeft.set(0);
+// 			rearLeft.set(0);
+// 			frontRight.set(0);
+// 			frontLeft.set(0);
+// 		}
 		
-		if(joystick.getY(Hand.kRight) > 0.35)
-		{
-			frontLeft.set(-joystick.getY(Hand.kRight));
-			rearLeft.set(-joystick.getY(Hand.kRight));
-			frontRight.set(joystick.getY(Hand.kRight));
-			rearRight.set(joystick.getY(Hand.kRight));
+// 		if(joystick.getY(Hand.kRight) > 0.35)
+// 		{
+// 			//frontLeft.set(-joystick.getY(Hand.kRight));
+// 			//rearLeft.set(-joystick.getY(Hand.kRight));
+// 			frontRight.set(joystick.getY(Hand.kRight));
+// 			rearRight.set(joystick.getY(Hand.kRight));
 
-		}
-		else
-		{
-			frontLeft.set(0);
-			rearLeft.set(0);
-			frontRight.set(0);
-			frontLeft.set(0);
-		}
-	}
-}
+// 		}
+// 		else if(joystick.getY(Hand.kRight) > -0.35)
+// 		{
+// 			frontRight.set(-joystick.getY(Hand.kRight));
+// 			rearRight.set(-joystick.getY(Hand.kRight));
+
+// 		}
+// 		else
+// 		{
+// 			frontLeft.set(0);
+// 			rearLeft.set(0);
+// 			frontRight.set(0);
+// 			frontLeft.set(0);
+// 		}
+// 	}
+ }
